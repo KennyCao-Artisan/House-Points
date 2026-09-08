@@ -9,7 +9,8 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* 衬线字体：优先 Baskerville，Windows 回退 Times New Roman */
+  font-family: Baskerville, "Times New Roman", serif;
 }
 body{
   background:#12141b;
@@ -99,15 +100,14 @@ h1{
 </head>
 <body>
 <header>
-  <h1>HDKWA House Points</h1>
-  <div class="subtitle">Terracotta Warriors🌟Medieval Knights🌟Norse Vikings🌟Roman Centurions</div>
+  <h1>🏆 HOUSE POINTS</h1>
+  <div class="subtitle">Inter‑House Competition Leaderboard</div>
 </header>
 <div class="container" id="board"></div>
 <div class="error-box" id="errorBox"></div>
 <div class="update-info" id="updateInfo"></div>
 
 <script>
-// 你的Google Sheet公开CSV链接
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpHngV7iJeVSkYznFca5ugSnMBMn2z7l0k2RZUaYA0bBuCFs-OvFY6HeWwkmhNWS1ui-Of0ggGfHaV/pub?output=csv";
 
 const subtitleMap = {
@@ -125,15 +125,16 @@ const classMap = {
 
 async function fetchPoints(){
   try{
-    const res = await fetch(CSV_URL + "?t="+Date.now());
-    if(!res.ok) throw new Error("fetch failed");
+    const res = await fetch(CSV_URL + "&t="+Date.now());
+    if(!res.ok) throw new Error("HTTP status not ok");
     const text = await res.text();
+    console.log("csv原始内容：", text);
     const lines = text.trim().split("\n");
     const houses = [];
     for(let i=1;i<lines.length;i++){
       const row = lines[i].split(",");
-      const name = row[0].trim();
-      const pts = parseInt(row[1].trim()) || 0;
+      const name = (row[0]||"").trim();
+      const pts = parseInt((row[1]||"0").trim()) || 0;
       houses.push({name, pts});
     }
     houses.sort((a,b)=> b.pts - a.pts);
@@ -141,8 +142,8 @@ async function fetchPoints(){
     document.getElementById("errorBox").innerText = "";
     document.getElementById("updateInfo").innerText = "Last updated: " + new Date().toLocaleTimeString();
   }catch(err){
-    console.error(err);
-    document.getElementById("errorBox").innerText = "You seemed to encounter an error, please try again later";
+    console.error("fetch错误：",err);
+    document.getElementById("errorBox").innerText = "⚠️ Could not load scores. Check Google Sheet sharing settings / network.";
   }
 }
 
