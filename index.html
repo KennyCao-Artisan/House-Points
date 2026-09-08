@@ -1,114 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>House Points Leaderboard</title>
+<title>House Points Board</title>
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans‑serif;
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif;}
 body{
   background:#0f111a;
   color:#fff;
-  min‑height:100vh;
+  min-height:100vh;
   padding:48px 24px;
 }
-header{
-  text‑align:center;
-  margin‑bottom:64px;
-}
 h1{
-  font‑size:56px;
-  font‑weight:700;
-  letter‑spacing:1px;
-  margin‑bottom:12px;
+  text-align:center;
+  font-size:3rem;
+  margin-bottom:12px;
+  letter-spacing:2px;
 }
-.subtitle{
-  color:#b0b8d4;
-  font‑size:20px;
+.sub-heading{
+  text-align:center;
+  color:#aaa;
+  font-size:1.2rem;
+  margin-bottom:56px;
 }
 .container{
-  max‑width:1400px;
+  max-width:1300px;
   margin:0 auto;
   display:grid;
-  grid‑template‑columns: repeat(auto‑fit, minmax(280px,1fr));
-  gap:32px;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap:28px;
 }
-.house‑card{
-  background: linear‑gradient(145deg, #1a1e2f, #141724);
-  border‑radius:22px;
-  padding:44px 28px;
-  box‑shadow:0 8px 32px rgba(0,0,0,0.35);
-  border:3px solid;
-  transition: all 0.4s ease;
-  text‑align:center;
+.house-card{
+  border-radius:20px;
+  padding:42px 24px;
+  text-align:center;
+  border-width:3px;
+  border-style:solid;
+  background:#181b2b;
+  transition: transform 0.25s ease;
 }
-/* 第一名金牌效果 */
-.house‑card.first‑place{
-  transform: scale(1.04);
-  box‑shadow:0 12px 42px rgba(255,215,0,0.25);
+.house-card:hover{
+  transform: translateY(-6px);
 }
-/* 四个House边框颜色 */
-.house‑green{border‑color:#27ae60;}
-.house‑blue{border‑color:#2980b9;}
-.house‑red{border‑color:#c0392b;}
-.house‑yellow{border‑color:#f1c40f;}
+.house‑green{border-color:#27ae60;}
+.house‑blue{border-color:#2980b9;}
+.house‑red{border-color:#c0392b;}
+.house‑yellow{border-color:#f1c40f;}
 
-.house‑card.first‑place.house‑green{box‑shadow:0 12px 42px rgba(39,174,96,0.35), 0 0 22px rgba(255,215,0,0.2);}
-.house‑card.first‑place.house‑blue{box‑shadow:0 12px 42px rgba(41,128,185,0.35), 0 0 22px rgba(255,215,0,0.2);}
-.house‑card.first‑place.house‑red{box‑shadow:0 12px 42px rgba(192,57,43,0.35), 0 0 22px rgba(255,215,0,0.2);}
-.house‑card.first‑place.house‑yellow{box‑shadow:0 12px 42px rgba(241,196,15,0.35), 0 0 22px rgba(255,215,0,0.2);}
-
-.house‑name{
-  font‑size:26px;
-  font‑weight:600;
-  margin‑bottom:10px;
+.house-name{
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:8px;
 }
-.house‑green .house‑name{color:#2ecc71;}
-.house‑blue .house‑name{color:#3498db;}
-.house‑red .house‑name{color:#e74c3c;}
-.house‑yellow .house‑name{color:#f9d71c;}
+.house‑green .house-name{color:#2ecc71;}
+.house‑blue .house-name{color:#3498db;}
+.house‑red .house-name{color:#e74c3c;}
+.house‑yellow .house-name{color:#f9d71c;}
 
 .house‑subtitle{
-  font‑size:17px;
-  color:#a8b2cc;
-  margin‑bottom:30px;
+  font-size:1.1rem;
+  color:#bbbbbb;
+  margin-bottom:24px;
 }
-.points‑num{
-  font‑size:68px;
-  font‑weight:700;
+.points-num{
+  font-size:4.5rem;
+  font-weight:bold;
   color:#ffffff;
 }
-.error‑box{
-  text‑align:center;
-  color:#ff7777;
-  font‑size:20px;
-  margin‑top:80px;
-}
-.update‑info{
-  text‑align:center;
-  margin‑top:60px;
-  color:#77809c;
-  font‑size:14px;
+.last-update{
+  text-align:center;
+  margin-top:50px;
+  color:#888;
+  font-size:1rem;
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>HDKWA House Points</h1>
-  <div class="subtitle">Inter‑House Competition Leaderboard</div>
-</header>
+<h1>🏆 HOUSE POINTS</h1>
+<div class="sub-heading">Inter‑House Competition Leaderboard</div>
 <div class="container" id="board"></div>
-<div class="error‑box" id="errorBox"></div>
-<div class="update‑info" id="updateInfo"></div>
+<div class="last-update" id="updateInfo"></div>
 
 <script>
-// 你的现成CSV链接，无需修改
+// =====================
+// 👉 这里替换为你的CSV链接
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpHngV7iJeVSkYznFca5ugSnMBMn2z7l0k2RZUaYA0bBuCFs-OvFY6HeWwkmhNWS1ui-Of0ggGfHaV/pub?output=csv";
+// =====================
 
 const subtitleMap = {
   "Green House": "Terracotta Warriors",
@@ -126,7 +104,6 @@ const classMap = {
 async function fetchPoints(){
   try{
     const res = await fetch(CSV_URL);
-    if(!res.ok) throw new Error("Network error");
     const text = await res.text();
     const lines = text.trim().split("\n");
     const houses = [];
@@ -136,37 +113,33 @@ async function fetchPoints(){
       const pts = parseInt(row[1].trim()) || 0;
       houses.push({name, pts});
     }
-    // 分数从高到低排序
     houses.sort((a,b)=> b.pts - a.pts);
     render(houses);
-    document.getElementById("errorBox").innerText = "";
-    document.getElementById("updateInfo").innerText = "Last updated: " + new Date().toLocaleTimeString();
+    document.getElementById("updateInfo").innerText = "Last updated: "+new Date().toLocaleTimeString();
   }catch(err){
-    console.error(err);
-    document.getElementById("errorBox").innerText = "⚠️ Could not load scores. Check Google Sheet sharing settings.";
+    console.error("Load error", err);
+    document.getElementById("updateInfo").innerText = "⚠️ Could not load scores. Check Google Sheet sharing settings.";
   }
 }
 
 function render(list){
-  const container = document.getElementById("board");
-  container.innerHTML = "";
-  list.forEach((h, index)=>{
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  list.forEach(h => {
     const card = document.createElement("div");
-    let cssClass = `house‑card ${classMap[h.name]}`;
-    // 第一名添加 first‑place 样式
-    if(index === 0) cssClass += " first‑place";
-    card.className = cssClass;
+    card.className = `house-card ${classMap[h.name]}`;
     card.innerHTML = `
-      <div class="house‑name">${h.name}</div>
+      <div class="house-name">${h.name}</div>
       <div class="house‑subtitle">${subtitleMap[h.name]}</div>
-      <div class="points‑num">${h.pts}</div>
+      <div class="points-num">${h.pts}</div>
     `;
-    container.appendChild(card);
-  })
+    board.appendChild(card);
+  });
 }
 
 fetchPoints();
-setInterval(fetchPoints, 5000);
+// 每15秒刷新；5000=5秒
+setInterval(fetchPoints, 15000);
 </script>
 </body>
 </html>
