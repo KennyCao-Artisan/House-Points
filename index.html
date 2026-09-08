@@ -142,7 +142,7 @@ async function fetchPoints(){
     document.getElementById("updateInfo").innerText = "Last updated: " + new Date().toLocaleTimeString();
   }catch(err){
     console.error(err);
-    document.getElementById("errorBox").innerText = "⚠️ Could not load scores. Check Google Sheet sharing settings / network.";
+    document.getElementById("errorBox").innerText = "You seemed to encounter an error, please try again later";
   }
 }
 
