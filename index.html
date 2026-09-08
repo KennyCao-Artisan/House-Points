@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>House Points Board</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif;}
+body{
+  background:#0f111a;
+  color:#fff;
+  min-height:100vh;
+  padding:48px 24px;
+}
+h1{
+  text-align:center;
+  font-size:3rem;
+  margin-bottom:12px;
+  letter-spacing:2px;
+}
+.sub-heading{
+  text-align:center;
+  color:#aaa;
+  font-size:1.2rem;
+  margin-bottom:56px;
+}
+.container{
+  max-width:1300px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap:28px;
+}
+.house-card{
+  border-radius:20px;
+  padding:42px 24px;
+  text-align:center;
+  border-width:3px;
+  border-style:solid;
+  background:#181b2b;
+  transition: transform 0.25s ease;
+}
+.house-card:hover{
+  transform: translateY(-6px);
+}
+.house‑green{border-color:#27ae60;}
+.house‑blue{border-color:#2980b9;}
+.house‑red{border-color:#c0392b;}
+.house‑yellow{border-color:#f1c40f;}
+
+.house-name{
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.house‑green .house-name{color:#2ecc71;}
+.house‑blue .house-name{color:#3498db;}
+.house‑red .house-name{color:#e74c3c;}
+.house‑yellow .house-name{color:#f9d71c;}
+
+.house‑subtitle{
+  font-size:1.1rem;
+  color:#bbbbbb;
+  margin-bottom:24px;
+}
+.points-num{
+  font-size:4.5rem;
+  font-weight:bold;
+  color:#ffffff;
+}
+.last-update{
+  text-align:center;
+  margin-top:50px;
+  color:#888;
+  font-size:1rem;
+}
+</style>
+</head>
+<body>
+<h1>🏆 HOUSE POINTS</h1>
+<div class="sub-heading">Inter‑House Competition Leaderboard</div>
+<div class="container" id="board"></div>
+<div class="last-update" id="updateInfo"></div>
+
+<script>
+// =====================
+// 👉 这里替换为你的CSV链接
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpHngV7iJeVSkYznFca5ugSnMBMn2z7l0k2RZUaYA0bBuCFs-OvFY6HeWwkmhNWS1ui-Of0ggGfHaV/pub?output=csv";
+// =====================
+
+const subtitleMap = {
+  "Green House": "Terracotta Warriors",
+  "Blue House": "Norse Vikings",
+  "Red House": "Roman Centurions",
+  "Yellow House": "Medieval Knights"
+};
+const classMap = {
+  "Green House": "house‑green",
+  "Blue House": "house‑blue",
+  "Red House": "house‑red",
+  "Yellow House": "house‑yellow"
+};
+
+async function fetchPoints(){
+  try{
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    const lines = text.trim().split("\n");
+    const houses = [];
+    for(let i=1;i<lines.length;i++){
+      const row = lines[i].split(",");
+      const name = row[0].trim();
+      const pts = parseInt(row[1].trim()) || 0;
+      houses.push({name, pts});
+    }
+    houses.sort((a,b)=> b.pts - a.pts);
+    render(houses);
+    document.getElementById("updateInfo").innerText = "Last updated: "+new Date().toLocaleTimeString();
+  }catch(err){
+    console.error("Load error", err);
+    document.getElementById("updateInfo").innerText = "⚠️ Could not load scores. Check Google Sheet sharing settings.";
+  }
+}
+
+function render(list){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  list.forEach(h => {
+    const card = document.createElement("div");
+    card.className = `house-card ${classMap[h.name]}`;
+    card.innerHTML = `
+      <div class="house-name">${h.name}</div>
+      <div class="house‑subtitle">${subtitleMap[h.name]}</div>
+      <div class="points-num">${h.pts}</div>
+    `;
+    board.appendChild(card);
+  });
+}
+
+fetchPoints();
+// 每15秒刷新；5000=5秒
+setInterval(fetchPoints, 15000);
+</script>
+</body>
+</html>
